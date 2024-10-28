@@ -2,8 +2,10 @@ name: Build and Sign APK
 
 on:
   push:
-    branches:
-      - master
+    paths-ignore:
+      - '**'
+    tags-ignore:
+      - '**'
 
 jobs:
   build:
