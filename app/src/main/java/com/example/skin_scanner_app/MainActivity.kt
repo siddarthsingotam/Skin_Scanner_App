@@ -1,24 +1,57 @@
 package com.example.skin_scanner_app
 
+import android.Manifest
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,13 +62,46 @@ import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
+
+    lateinit var permissionManager: PermissionManager
+    lateinit var cameraPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var cameraManager: CameraManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        cameraManager = CameraManager(this)
+        permissionManager = PermissionManager(this)
+
+        // Camera Permission Launcher
+        cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                openCamera()
+            } else {
+                Toast.makeText(this, getString(R.string.camera_permission_needed), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Camera Activity Result Launcher
+        cameraActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                // Placeholder for action after successfully opening the camera
+                Log.d("Camera", "OK!!")
+            }
+        }
+
         enableEdgeToEdge()
         setContent {
             Skin_Scanner_AppTheme {
                 MainApp()
             }
+        }
+    }
+
+    fun openCamera() {
+        val cameraIntent = cameraManager.getCameraIntent()
+        if (cameraIntent.resolveActivity(packageManager) != null) {
+            cameraActivityResultLauncher.launch(cameraIntent)
         }
     }
 }
@@ -140,6 +206,9 @@ fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit) {
 
 @Composable
 fun Content() {
+    val context = LocalContext.current
+    val activity = context as? MainActivity ?: return
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -172,7 +241,22 @@ fun Content() {
         }
         Spacer(modifier = Modifier.height(40.dp))
         Button(
-            onClick = { /* TODO */ },
+             onClick = {
+                 Log.d("Camera", "Button was clicked")
+                // Check if the permission is already granted
+                if (activity.permissionManager.isPermissionGranted(Manifest.permission.CAMERA)) {
+                    // Open the camera directly
+                    Log.d("Camera", "Should open camera...")
+                    activity.openCamera()
+                } else {
+                    // Request the camera permission
+                    Log.d("Camera","Will request camera permissions...")
+                    activity.permissionManager.requestPermission(
+                        activity.cameraPermissionLauncher,
+                        Manifest.permission.CAMERA
+                    )
+                }
+            },
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
             modifier = Modifier.size(100.dp)
