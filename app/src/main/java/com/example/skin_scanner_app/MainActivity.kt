@@ -85,8 +85,11 @@ class MainActivity : ComponentActivity() {
         // Camera Activity Result Launcher
         cameraActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                // Placeholder for action after successfully opening the camera
-                Log.d("Camera", "OK!!")
+                val photoPath = cameraManager.getCurrentPhotoPath()
+                if (photoPath != null) {
+                    // TO DO : Handle the image after it's taken... display it and run AI on it?
+                    Log.d("Camera", "Photo saved at: $photoPath")
+                }
             }
         }
 
@@ -100,8 +103,10 @@ class MainActivity : ComponentActivity() {
 
     fun openCamera() {
         val cameraIntent = cameraManager.getCameraIntent()
-        if (cameraIntent.resolveActivity(packageManager) != null) {
-            cameraActivityResultLauncher.launch(cameraIntent)
+        if (cameraIntent != null) {
+            if (cameraIntent.resolveActivity(packageManager) != null) {
+                cameraActivityResultLauncher.launch(cameraIntent)
+            }
         }
     }
 }
@@ -241,8 +246,8 @@ fun Content() {
         }
         Spacer(modifier = Modifier.height(40.dp))
         Button(
-             onClick = {
-                 Log.d("Camera", "Button was clicked")
+            onClick = {
+                Log.d("Camera", "Button was clicked")
                 // Check if the permission is already granted
                 if (activity.permissionManager.isPermissionGranted(Manifest.permission.CAMERA)) {
                     // Open the camera directly
@@ -250,7 +255,7 @@ fun Content() {
                     activity.openCamera()
                 } else {
                     // Request the camera permission
-                    Log.d("Camera","Will request camera permissions...")
+                    Log.d("Camera", "Will request camera permissions...")
                     activity.permissionManager.requestPermission(
                         activity.cameraPermissionLauncher,
                         Manifest.permission.CAMERA
