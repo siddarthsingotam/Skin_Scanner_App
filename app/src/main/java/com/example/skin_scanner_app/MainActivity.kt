@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skin_scanner_app.ui.theme.Skin_Scanner_AppTheme
 import kotlinx.coroutines.launch
+import coil3.compose.AsyncImage
 
 
 class MainActivity : ComponentActivity() {
@@ -67,6 +69,8 @@ class MainActivity : ComponentActivity() {
     lateinit var cameraPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraManager: CameraManager
+
+    private var photoPath by mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,10 +89,9 @@ class MainActivity : ComponentActivity() {
         // Camera Activity Result Launcher
         cameraActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val photoPath = cameraManager.getCurrentPhotoPath()
-                if (photoPath != null) {
-                    // TO DO : Handle the image after it's taken... display it and run AI on it?
-                    Log.d("Camera", "Photo saved at: $photoPath")
+                cameraManager.getCurrentPhotoPath()?.let { path ->
+                    Log.d("Camera", "Photo saved at: $path")
+                    photoPath = path // Update composable state with the image path
                 }
             }
         }
@@ -96,7 +99,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Skin_Scanner_AppTheme {
-                MainApp()
+                MainApp(photoPath)
             }
         }
     }
@@ -113,7 +116,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainApp() {
+fun MainApp(photoPath: String?) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     var selectedScreen by remember { mutableStateOf("Home") }
@@ -177,8 +180,9 @@ fun MainApp() {
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
+                //Content(photoPath)
                 when (selectedScreen) {
-                    "Home" -> Content()
+                    "Home" -> Content(photoPath) // Use the reactive photoPath
                     "Recommendations" -> Recommendations()
                 }
             }
@@ -210,7 +214,7 @@ fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun Content() {
+fun Content(photoPath: String?) {
     val context = LocalContext.current
     val activity = context as? MainActivity ?: return
 
@@ -273,6 +277,17 @@ fun Content() {
                 textAlign = TextAlign.Center
             )
         }
+
+        // Display the captured image
+           photoPath?.let { path ->
+               Spacer(modifier = Modifier.height(20.dp))
+               AsyncImage(
+                   model = path,
+                   contentDescription = null,
+                   modifier = Modifier.size(200.dp),
+                   contentScale = ContentScale.Crop
+               )
+           }
     }
 }
 
@@ -289,13 +304,5 @@ fun Recommendations() {
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainAppPreview() {
-    Skin_Scanner_AppTheme {
-        MainApp()
     }
 }
