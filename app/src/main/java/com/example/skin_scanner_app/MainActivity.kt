@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -70,7 +71,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraManager: CameraManager
 
-    private var photoPath by mutableStateOf<String?>(null)
+    var photoPath by mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -278,16 +279,59 @@ fun Content(photoPath: String?) {
             )
         }
 
+        Spacer(modifier = Modifier.height(30.dp))
+
         // Display the captured image
-           photoPath?.let { path ->
-               Spacer(modifier = Modifier.height(20.dp))
-               AsyncImage(
-                   model = path,
-                   contentDescription = null,
-                   modifier = Modifier.size(200.dp),
-                   contentScale = ContentScale.Crop
-               )
-           }
+        photoPath?.let { path ->
+            Text(
+                text = "Picture:",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            AsyncImage(
+                model = path,
+                contentDescription = null,
+                modifier = Modifier.size(200.dp),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = { activity.photoPath = null },
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Text(
+                        text = "Clear",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        Log.d("Analyze", "Photo path: $path")
+                        Toast.makeText(context, "TODO: Implement AI logic", Toast.LENGTH_SHORT).show()
+                    },
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Text(
+                        text = "Analyze",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
     }
 }
 
