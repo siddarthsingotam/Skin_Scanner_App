@@ -1,4 +1,40 @@
 <resources>
     <string name="app_name">Skin_Scanner_App</string>
     <string name="camera_permission_needed">Camera permission is needed to use this feature.</string>
+
+<!--    Recommendations tab   -->
+    <string name="recommendations_title">Recommendations to Reduce Skin Cancer Risk</string>
+    <string name="protect_skin_title">Protect Your Skin From UV Rays:</string>
+    <string name="protect_skin_tips">
+        • Stay in the shade during peak UV hours (10 a.m. to 4 p.m.).\n
+        • Wear protective clothing like long sleeves, pants, and wide-brimmed hats.\n
+        • Use sunglasses with UVA and UVB protection to shield your eyes.\n
+        • Apply sunscreen: Use a broad-spectrum SPF 30+ sunscreen (preferably SPF 50) and reapply every 2 hours.
+    </string>
+    <string name="uv_index_title">Understand the UV Index:</string>
+    <string name="uv_index_tips">Check the daily UV Index for your area. If it’s 3 or higher, take extra precautions to protect your skin.</string>
+    <string name="avoid_uv_title">Avoid Artificial UV Exposure:</string>
+    <string name="avoid_uv_tips">
+        • Skip tanning beds, booths, and sunlamps. These devices emit high levels of UV rays, increasing the risk of skin cancer.\n
+        • A tan is a sign of skin damage, not health. Even a “base tan” can harm your skin.
+    </string>
+    <string name="sun_safety_title">General Sun Safety Tips:</string>
+    <string name="sun_safety_tips">
+        • Stay hydrated: Drink plenty of water when outdoors.\n
+        • Use shade creatively: Umbrellas, trees, and shelters can help reduce UV exposure.\n
+        • Teach children sun safety: Start early with sunscreen and protective clothing to instill good habits.
+    </string>
+    <string name="end_of_day_title">End-of-Day Skin Care:</string>
+    <string name="end_of_day_tips">
+    • Apply a gentle moisturizer: Rehydrate your skin after cleansing to help restore its natural barrier and lock in moisture. Look for moisturizers with soothing ingredients like aloe vera, hyaluronic acid, or ceramides.\n
+    • Avoid harsh chemicals: Choose alcohol-free and fragrance-free products to prevent irritation.\n
+    • Focus on damaged areas: If your skin feels dry, red, or irritated from sun exposure, use a calming lotion designed for after-sun care.\n
+    • Hydrate internally: Drink plenty of water throughout the day to keep your skin hydrated from within.
+</string>
+    <string name="skin_damage_title">Signs of Skin Damage:</string>
+    <string name="skin_damage_tips">
+        Any redness, tanning, or burning is a sign of skin injury. Even slight tanning can lead to long-term damage. Watch for new or unusual moles and consult a dermatologist if you notice changes.
+    </string>
+    <string name="source_title">Source:</string>
+    <string name="source_link_text">CDC: Skin Cancer Prevention</string>
 </resources>

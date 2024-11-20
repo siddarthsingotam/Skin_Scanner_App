@@ -2,6 +2,7 @@ package com.example.skin_scanner_app
 
 import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -24,7 +25,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -54,8 +57,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skin_scanner_app.ui.theme.Skin_Scanner_AppTheme
@@ -127,7 +133,7 @@ fun MainApp(photoPath: String?) {
         drawerContent = {
             Column(
                 modifier = Modifier
-                    .width(screenWidth * 0.68f)  // Adjust width to 60% of the screen
+                    .width(screenWidth * 0.68f)  // Adjust width to 68% of the screen
                     .fillMaxHeight()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(16.dp)
@@ -333,16 +339,130 @@ fun Content(photoPath: String?) {
 
 @Composable
 fun Recommendations() {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .padding(16.dp)
     ) {
-        Text(
-            text = "Here are some recommendations...",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = stringResource(R.string.recommendations_title),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.protect_skin_title),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.protect_skin_tips),
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.uv_index_title),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.uv_index_tips),
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.avoid_uv_title),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.avoid_uv_tips),
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.sun_safety_title),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.sun_safety_tips),
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Text(
+                text = stringResource(R.string.end_of_day_title),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.end_of_day_tips),
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Text(
+                text = stringResource(R.string.skin_damage_title),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.skin_damage_tips),
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.source_title),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            val annotatedText = buildAnnotatedString {
+                append(stringResource(R.string.source_link_text))
+                addStringAnnotation(
+                    tag = "URL",
+                    annotation = "https://www.cdc.gov/skin-cancer/prevention/index.html",
+                    start = 0,
+                    end = stringResource(R.string.source_link_text).length
+                )
+            }
+
+            Text(
+                text = annotatedText,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.padding(bottom = 16.dp).clickable {
+                    annotatedText.getStringAnnotations("URL", 0, annotatedText.length).firstOrNull()?.let { annotation ->
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
+                        context.startActivity(intent)
+                    }
+                }
+            )
+
+
+        }
     }
 }
