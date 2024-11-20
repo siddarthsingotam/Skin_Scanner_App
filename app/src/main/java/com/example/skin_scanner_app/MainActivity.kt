@@ -245,7 +245,7 @@ fun Content(photoPath: String?) {
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(16.dp)
         )
-        Spacer(modifier = Modifier.height(220.dp))
+        Spacer(modifier = Modifier.height(60.dp))
         Button(
             onClick = {
                 Log.d("Camera", "Button was clicked")
