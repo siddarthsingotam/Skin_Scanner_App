@@ -49,14 +49,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skin_scanner_app.ui.theme.Skin_Scanner_AppTheme
@@ -128,7 +127,7 @@ fun MainApp(photoPath: String?) {
         drawerContent = {
             Column(
                 modifier = Modifier
-                    .width(screenWidth * 0.6f)  // Adjust width to 60% of the screen
+                    .width(screenWidth * 0.68f)  // Adjust width to 60% of the screen
                     .fillMaxHeight()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(16.dp)
@@ -181,12 +180,12 @@ fun MainApp(photoPath: String?) {
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                //Content(photoPath)
                 when (selectedScreen) {
-                    "Home" -> Content(photoPath) // Use the reactive photoPath
+                    "Home" -> Content(photoPath)
                     "Recommendations" -> Recommendations()
                 }
             }
+
         }
     }
 }
@@ -222,7 +221,8 @@ fun Content(photoPath: String?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.surface),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -234,33 +234,24 @@ fun Content(photoPath: String?) {
             Text(
                 text = "Skin Scanner",
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary
             )
         }
         Spacer(modifier = Modifier.height(6.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Skin Scanner scans your skin using LLM to help detect possible melanoma.",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-        Spacer(modifier = Modifier.height(40.dp))
+        Text(
+            text = "Scan your skin to detect possible melanoma using advanced AI.",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(220.dp))
         Button(
             onClick = {
                 Log.d("Camera", "Button was clicked")
-                // Check if the permission is already granted
                 if (activity.permissionManager.isPermissionGranted(Manifest.permission.CAMERA)) {
-                    // Open the camera directly
-                    Log.d("Camera", "Should open camera...")
                     activity.openCamera()
                 } else {
-                    // Request the camera permission
-                    Log.d("Camera", "Will request camera permissions...")
                     activity.permissionManager.requestPermission(
                         activity.cameraPermissionLauncher,
                         Manifest.permission.CAMERA
@@ -268,13 +259,18 @@ fun Content(photoPath: String?) {
                 }
             },
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-            modifier = Modifier.size(100.dp)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ),
+            modifier = Modifier
+                .size(120.dp)
+                .shadow(4.dp, CircleShape)
         ) {
             Text(
                 text = "Start Scan",
-                color = Color.White,
-                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center
             )
         }
@@ -283,16 +279,14 @@ fun Content(photoPath: String?) {
 
         // Display the captured image
         photoPath?.let { path ->
-            Text(
-                text = "Picture:",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
             AsyncImage(
                 model = path,
-                contentDescription = null,
-                modifier = Modifier.size(200.dp),
+                contentDescription = "Captured Image",
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(MaterialTheme.colorScheme.surface, CircleShape)
+                    .padding(8.dp)
+                    .shadow(4.dp, CircleShape),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -303,12 +297,13 @@ fun Content(photoPath: String?) {
                 Button(
                     onClick = { activity.photoPath = null },
                     shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                     modifier = Modifier.size(100.dp)
                 ) {
                     Text(
                         text = "Clear",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onError,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center
                     )
@@ -316,16 +311,16 @@ fun Content(photoPath: String?) {
 
                 Button(
                     onClick = {
-                        Log.d("Analyze", "Photo path: $path")
-                        Toast.makeText(context, "TODO: Implement AI logic", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
                     },
                     shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     modifier = Modifier.size(100.dp)
                 ) {
                     Text(
                         text = "Analyze",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center
                     )
@@ -334,6 +329,7 @@ fun Content(photoPath: String?) {
         }
     }
 }
+
 
 @Composable
 fun Recommendations() {
