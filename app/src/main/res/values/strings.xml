@@ -12,7 +12,10 @@
         • Apply sunscreen: Use a broad-spectrum SPF 30+ sunscreen (preferably SPF 50) and reapply every 2 hours.
     </string>
     <string name="uv_index_title">Understand the UV Index:</string>
-    <string name="uv_index_tips">Check the daily UV Index for your area. If it’s 3 or higher, take extra precautions to protect your skin.</string>
+
+    <string name="uv_index_clickable">Check the daily UV Index for your area.</string>
+    <string name="uv_index_text"> If it’s 3 or higher, take extra precautions to protect your skin.</string>
+
     <string name="avoid_uv_title">Avoid Artificial UV Exposure:</string>
     <string name="avoid_uv_tips">
         • Skip tanning beds, booths, and sunlamps. These devices emit high levels of UV rays, increasing the risk of skin cancer.\n

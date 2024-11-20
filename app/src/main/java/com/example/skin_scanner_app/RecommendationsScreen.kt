@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
@@ -64,12 +66,31 @@ fun Recommendations() {
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            Text(
-                text = stringResource(R.string.uv_index_tips),
-                style = MaterialTheme.typography.bodyMedium,
-                lineHeight = 20.sp,
+
+            Column(
                 modifier = Modifier.padding(bottom = 16.dp)
-            )
+            ) {
+                // Clickable first row
+                Text(
+                    text = stringResource(R.string.uv_index_clickable),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    lineHeight = 20.sp,
+                    modifier = Modifier.clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://en.ilmatieteenlaitos.fi/uv-index"))
+                        context.startActivity(intent)
+                    }
+                )
+
+                // Non-clickable part of the rest of the text
+                Text(
+                    text = stringResource(R.string.uv_index_text),
+                    style = MaterialTheme.typography.bodyMedium,
+                    lineHeight = 20.sp
+                )
+            }
 
             Text(
                 text = stringResource(R.string.avoid_uv_title),
