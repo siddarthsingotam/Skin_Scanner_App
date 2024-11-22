@@ -70,6 +70,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Pytorch dependencies
     implementation(libs.pytorch.android.lite)
     implementation(libs.pytorch.android.torchvision.lite)
+
+    // ONNX dependencies
+    implementation(libs.onnxruntime.android)
+
 }
