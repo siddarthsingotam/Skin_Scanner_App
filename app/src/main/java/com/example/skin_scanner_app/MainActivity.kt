@@ -61,7 +61,14 @@ import androidx.compose.ui.unit.sp
 import com.example.skin_scanner_app.ui.theme.Skin_Scanner_AppTheme
 import kotlinx.coroutines.launch
 import coil3.compose.AsyncImage
-
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
 
 class MainActivity : ComponentActivity() {
 
@@ -111,6 +118,27 @@ class MainActivity : ComponentActivity() {
                 cameraActivityResultLauncher.launch(cameraIntent)
             }
         }
+    }
+
+    fun analyzeImage(filePath: String) {
+        val file = File(filePath)
+        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file)
+        val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+
+        RetrofitClient.instance.uploadImage(body).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val result = response.body()?.string()
+                    Toast.makeText(this@MainActivity, "Result: $result", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this@MainActivity, "Failed to get result", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 }
 
@@ -311,7 +339,10 @@ fun Content(photoPath: String?) {
 
                 Button(
                     onClick = {
-                        Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
+                        photoPath?.let { path ->
+                            activity.analyzeImage(path)
+                        }
                     },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
