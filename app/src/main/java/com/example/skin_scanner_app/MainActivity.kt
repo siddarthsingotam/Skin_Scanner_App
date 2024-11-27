@@ -78,9 +78,11 @@ class MainActivity : ComponentActivity() {
     private lateinit var cameraManager: CameraManager
 
     var photoPath by mutableStateOf<String?>(null)
+    var resultText by mutableStateOf<String?>(null) // State for holding the result text from server
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         cameraManager = CameraManager(this)
         permissionManager = PermissionManager(this)
 
@@ -100,6 +102,7 @@ class MainActivity : ComponentActivity() {
                 cameraManager.getCurrentPhotoPath()?.let { path ->
                     Log.d("Camera", "Photo saved at: $path")
                     photoPath = path // Update composable state with the image path
+                    resultText = null // Reset result text when a new picture is taken
                 }
             }
         }
@@ -107,17 +110,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Skin_Scanner_AppTheme {
-                MainApp(photoPath)
+                MainApp(photoPath, resultText)
             }
         }
     }
 
     fun openCamera() {
         val cameraIntent = cameraManager.getCameraIntent()
-        if (cameraIntent != null) {
-            if (cameraIntent.resolveActivity(packageManager) != null) {
-                cameraActivityResultLauncher.launch(cameraIntent)
-            }
+        if (cameraIntent?.resolveActivity(packageManager) != null) {
+            cameraActivityResultLauncher.launch(cameraIntent)
         }
     }
 
@@ -127,13 +128,13 @@ class MainActivity : ComponentActivity() {
         val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
 
         Log.d("MainActivity", "Sending image to server: ${file.name}")
-
         RetrofitClient.instance.uploadImage(body).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    val result = response.body()?.string()
+                    val result = response.body()?.string().orEmpty()
                     Toast.makeText(this@MainActivity, "Result: $result", Toast.LENGTH_LONG).show()
-                    Log.d("MainActivity", "Result: $result")
+-                   Log.d("MainActivity", "Result: $result")
+                    resultText = result // Update result text state
                 } else {
                     Toast.makeText(this@MainActivity, "Failed to get result", Toast.LENGTH_LONG).show()
                     Log.d("MainActivity", "Failed to get result: ${response.errorBody()?.string()}")
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainApp(photoPath: String?) {
+fun MainApp(photoPath: String?, resultText: String?) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     var selectedScreen by remember { mutableStateOf("Home") }
@@ -161,7 +162,7 @@ fun MainApp(photoPath: String?) {
         drawerContent = {
             Column(
                 modifier = Modifier
-                    .width(screenWidth * 0.68f)  // Adjust width to 68% of the screen
+                    .width(screenWidth * 0.68f) // Adjust width to 68% of the screen
                     .fillMaxHeight()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(16.dp)
@@ -170,7 +171,7 @@ fun MainApp(photoPath: String?) {
                     text = "Skin Scanner",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 30.dp) // replace with logo later?
+                    modifier = Modifier.padding(top = 30.dp)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 DrawerItem(
@@ -215,11 +216,10 @@ fun MainApp(photoPath: String?) {
                 contentAlignment = Alignment.Center
             ) {
                 when (selectedScreen) {
-                    "Home" -> Content(photoPath)
+                    "Home" -> Content(photoPath, resultText)
                     "Recommendations" -> Recommendations()
                 }
             }
-
         }
     }
 }
@@ -248,7 +248,7 @@ fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun Content(photoPath: String?) {
+fun Content(photoPath: String?, resultText: String?) {
     val context = LocalContext.current
     val activity = context as? MainActivity ?: return
 
@@ -280,6 +280,7 @@ fun Content(photoPath: String?) {
             modifier = Modifier.padding(16.dp)
         )
         Spacer(modifier = Modifier.height(60.dp))
+
         Button(
             onClick = {
                 Log.d("Camera", "Button was clicked")
@@ -308,7 +309,6 @@ fun Content(photoPath: String?) {
                 textAlign = TextAlign.Center
             )
         }
-
         Spacer(modifier = Modifier.height(30.dp))
 
         // Display the captured image
@@ -323,13 +323,18 @@ fun Content(photoPath: String?) {
                     .shadow(4.dp, CircleShape),
                 contentScale = ContentScale.Crop
             )
+
             Spacer(modifier = Modifier.height(20.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(
-                    onClick = { activity.photoPath = null },
+                    onClick = {
+                        activity.photoPath = null
+                        activity.resultText = null
+                    },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                     modifier = Modifier.size(100.dp)
@@ -346,10 +351,9 @@ fun Content(photoPath: String?) {
                 Button(
                     onClick = {
                         Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
-                        photoPath.let { path ->
-                            activity.analyzeImage(path)
-                        }
                         Log.d("Camera", "Analyze button clicked")
+                        activity.resultText = null // Clear previous result on new analyze
+                        path.let { activity.analyzeImage(it) }
                     },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -365,7 +369,15 @@ fun Content(photoPath: String?) {
                 }
             }
         }
+
+        // Display result text only if it's not null
+        resultText?.let {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Result: $it",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
     }
 }
-
-
