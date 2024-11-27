@@ -126,6 +126,8 @@ class MainActivity : ComponentActivity() {
         val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
 
+        Log.d("MainActivity", "Sending image to server: ${file.name}")
+
         RetrofitClient.instance.uploadImage(body).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -134,7 +136,7 @@ class MainActivity : ComponentActivity() {
                     Log.d("MainActivity", "Result: $result")
                 } else {
                     Toast.makeText(this@MainActivity, "Failed to get result", Toast.LENGTH_LONG).show()
-                    Log.d("MainActivity", "Failed to get result")
+                    Log.d("MainActivity", "Failed to get result: ${response.errorBody()?.string()}")
                 }
             }
 
