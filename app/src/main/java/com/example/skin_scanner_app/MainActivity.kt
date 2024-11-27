@@ -63,7 +63,7 @@ import kotlinx.coroutines.launch
 import coil3.compose.AsyncImage
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -90,6 +90,7 @@ class MainActivity : ComponentActivity() {
                 openCamera()
             } else {
                 Toast.makeText(this, getString(R.string.camera_permission_needed), Toast.LENGTH_SHORT).show()
+                Log.d("Camera", "Camera permission denied")
             }
         }
 
@@ -122,7 +123,7 @@ class MainActivity : ComponentActivity() {
 
     fun analyzeImage(filePath: String) {
         val file = File(filePath)
-        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file)
+        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
 
         RetrofitClient.instance.uploadImage(body).enqueue(object : Callback<ResponseBody> {
@@ -130,13 +131,16 @@ class MainActivity : ComponentActivity() {
                 if (response.isSuccessful) {
                     val result = response.body()?.string()
                     Toast.makeText(this@MainActivity, "Result: $result", Toast.LENGTH_LONG).show()
+                    Log.d("MainActivity", "Result: $result")
                 } else {
                     Toast.makeText(this@MainActivity, "Failed to get result", Toast.LENGTH_LONG).show()
+                    Log.d("MainActivity", "Failed to get result")
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                Log.e("MainActivity", "Error: ${t.message}")
             }
         })
     }
@@ -339,10 +343,11 @@ fun Content(photoPath: String?) {
 
                 Button(
                     onClick = {
-                        //Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
-                        photoPath?.let { path ->
+                        Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
+                        photoPath.let { path ->
                             activity.analyzeImage(path)
                         }
+                        Log.d("Camera", "Analyze button clicked")
                     },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
