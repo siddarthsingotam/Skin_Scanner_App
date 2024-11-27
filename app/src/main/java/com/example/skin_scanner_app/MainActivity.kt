@@ -69,6 +69,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
 
@@ -131,9 +132,11 @@ class MainActivity : ComponentActivity() {
         RetrofitClient.instance.uploadImage(body).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    val result = response.body()?.string().orEmpty()
+                    val responseString = response.body()?.string().orEmpty()
+                    val jsonObject = JSONObject(responseString)
+                    val result = jsonObject.getString("result")
                     Toast.makeText(this@MainActivity, "Result: $result", Toast.LENGTH_LONG).show()
--                   Log.d("MainActivity", "Result: $result")
+                    Log.d("MainActivity", "Result: $result")
                     resultText = result // Update result text state
                 } else {
                     Toast.makeText(this@MainActivity, "Failed to get result", Toast.LENGTH_LONG).show()
