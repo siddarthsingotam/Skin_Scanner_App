@@ -17,14 +17,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -79,6 +85,16 @@ fun CameraPreviewWithOverlay(
                 .border(4.dp, Color.Green, RoundedCornerShape(8.dp)) // Green border
         )
 
+        Text(
+            text = "Point the camera at the mold",
+            color = Color.White,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(top = 230.dp) // Adjust the padding to position the text below the rectangle
+        )
+
         // Capture Button
         Button(
             onClick = {
@@ -110,10 +126,15 @@ fun CameraPreviewWithOverlay(
                 )
             },
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(80.dp)
+                .align(Alignment.BottomCenter)       // Keep it in the bottom-center
+                .padding(bottom = 60.dp)             // Adjust padding to lift it slightly
         ) {
-            Text("Capture")
+            Text(
+                text = "Capture",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
