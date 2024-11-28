@@ -80,6 +80,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraManager: CameraManager
 
+    private var currentToast: Toast? = null
+
     var photoPath by mutableStateOf<String?>(null)
     var resultText by mutableStateOf("")
 
@@ -98,11 +100,7 @@ class MainActivity : ComponentActivity() {
                 if (isGranted) {
                     openCamera()
                 } else {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.camera_permission_needed),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast(getString(R.string.camera_permission_needed))
                     Log.d("Camera", "Camera permission denied")
                 }
             }
@@ -127,6 +125,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    fun showToast(message: String) {
+        currentToast?.cancel()
+        currentToast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+        currentToast?.show()
+    }
+
     fun openCamera() {
         val cameraIntent = cameraManager.getCameraIntent()
         if (cameraIntent?.resolveActivity(packageManager) != null) {
@@ -146,18 +150,17 @@ class MainActivity : ComponentActivity() {
                     val responseString = response.body()?.string().orEmpty()
                     val jsonObject = JSONObject(responseString)
                     val result = jsonObject.getString("result")
-                    //Toast.makeText(this@MainActivity, "Result: $result", Toast.LENGTH_LONG).show()
+                    showToast("Result: $result")
                     Log.d("MainActivity", "Result: $result")
                     resultText = result // Update result text state
                 } else {
-                    Toast.makeText(this@MainActivity, "Failed to get result", Toast.LENGTH_LONG)
-                        .show()
+                    showToast("Failed to get result")
                     Log.d("MainActivity", "Failed to get result: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                showToast("Error: ${t.message}")
                 Log.e("MainActivity", "Error: ${t.message}")
             }
         })
@@ -329,11 +332,7 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onError = { exception ->
                                     Log.e("Camera", "Error: ${exception.localizedMessage}")
-                                    Toast.makeText(
-                                        activity,
-                                        "Error: ${exception.localizedMessage}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    showToast("Error: ${exception.localizedMessage}")
                                 }
                             )
                         }
@@ -407,7 +406,8 @@ class MainActivity : ComponentActivity() {
 
                     Button(
                         onClick = {
-                            Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
+                            showToast("Analyzing...")
                             Log.d("Camera", "Analyze button clicked")
                             path.let { activity.analyzeImage(it) }
                         },
