@@ -332,9 +332,9 @@ fun Content(photoPath: String?, resultText: String?) {
                 contentDescription = "Captured Image",
                 modifier = Modifier
                     .size(200.dp)
-                    .background(MaterialTheme.colorScheme.surface, CircleShape)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(8.dp)
-                    .shadow(4.dp, CircleShape),
+                    .shadow(4.dp),
                 contentScale = ContentScale.Crop
             )
 

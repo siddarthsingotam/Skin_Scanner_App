@@ -74,7 +74,7 @@ fun CameraPreviewWithOverlay(
         // Overlay: Green-bordered rectangle
         Box(
             modifier = Modifier
-                .size(50.dp) // Size of the rectangle
+                .size(200.dp) // Size of the rectangle
                 .align(Alignment.Center) // Center the rectangle
                 .border(4.dp, Color.Green, RoundedCornerShape(8.dp)) // Green border
         )
@@ -124,10 +124,10 @@ fun cropImageToRectangle(imageFile: File): File? {
         val originalBitmap = BitmapFactory.decodeFile(imageFile.absolutePath) ?: return null
 
         // Define cropping rectangle (adjust coordinates and dimensions as needed)
-        val rectX = (originalBitmap.width - 200) / 2 // Centered X
-        val rectY = (originalBitmap.height - 200) / 2 // Centered Y
-        val rectWidth = 200
-        val rectHeight = 200
+        val rectX = (originalBitmap.width - 950) / 2 // Centered X
+        val rectY = (originalBitmap.height - 950) / 2 // Centered Y
+        val rectWidth = 950
+        val rectHeight = 950
 
         // Crop the bitmap
         val croppedBitmap = Bitmap.createBitmap(
