@@ -146,7 +146,7 @@ class MainActivity : ComponentActivity() {
                     val responseString = response.body()?.string().orEmpty()
                     val jsonObject = JSONObject(responseString)
                     val result = jsonObject.getString("result")
-                    Toast.makeText(this@MainActivity, "Result: $result", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this@MainActivity, "Result: $result", Toast.LENGTH_LONG).show()
                     Log.d("MainActivity", "Result: $result")
                     resultText = result // Update result text state
                 } else {
