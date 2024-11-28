@@ -346,6 +346,7 @@ fun Content(photoPath: String?, resultText: String?) {
             ) {
                 Button(
                     onClick = {
+                        Log.d("ClearButton", "Clear button clicked")
                         activity.photoPath = null
                         activity.resultText = null
                     },

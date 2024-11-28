@@ -1,5 +1,7 @@
 package com.example.skin_scanner_app.ui
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -27,6 +29,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import java.io.File
+import java.io.FileOutputStream
 
 @Composable
 fun CameraPreviewWithOverlay(
@@ -71,12 +74,12 @@ fun CameraPreviewWithOverlay(
         // Overlay: Green-bordered rectangle
         Box(
             modifier = Modifier
-                .size(200.dp) // Size of the rectangle
+                .size(50.dp) // Size of the rectangle
                 .align(Alignment.Center) // Center the rectangle
                 .border(4.dp, Color.Green, RoundedCornerShape(8.dp)) // Green border
         )
 
-        // Capture Button (Optional)
+        // Capture Button
         Button(
             onClick = {
                 val outputDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -91,7 +94,13 @@ fun CameraPreviewWithOverlay(
                     executor,
                     object : ImageCapture.OnImageSavedCallback {
                         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                            onImageCaptured(photoFile.absolutePath)
+                            // Crop the image after it's saved
+                            val croppedFile = cropImageToRectangle(photoFile)
+                            if (croppedFile != null) {
+                                onImageCaptured(croppedFile.absolutePath)
+                            } else {
+                                onError(Exception("Failed to crop image"))
+                            }
                         }
 
                         override fun onError(exception: ImageCaptureException) {
@@ -102,9 +111,39 @@ fun CameraPreviewWithOverlay(
             },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(16.dp)
+                .padding(80.dp)
         ) {
             Text("Capture")
         }
+    }
+}
+
+// Cropping logic
+fun cropImageToRectangle(imageFile: File): File? {
+    try {
+        val originalBitmap = BitmapFactory.decodeFile(imageFile.absolutePath) ?: return null
+
+        // Define cropping rectangle (adjust coordinates and dimensions as needed)
+        val rectX = (originalBitmap.width - 200) / 2 // Centered X
+        val rectY = (originalBitmap.height - 200) / 2 // Centered Y
+        val rectWidth = 200
+        val rectHeight = 200
+
+        // Crop the bitmap
+        val croppedBitmap = Bitmap.createBitmap(
+            originalBitmap,
+            rectX, rectY, rectWidth, rectHeight
+        )
+
+        // Save the cropped image to a new file
+        val croppedFile = File(imageFile.parent, "CROPPED_${imageFile.name}")
+        FileOutputStream(croppedFile).use { out ->
+            croppedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        }
+
+        return croppedFile
+    } catch (e: Exception) {
+        Log.e("Camera", "Error cropping image: ${e.localizedMessage}")
+        return null
     }
 }
