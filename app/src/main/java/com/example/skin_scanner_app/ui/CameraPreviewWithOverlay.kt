@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.skin_scanner_app.R
 import java.io.File
 import java.io.FileOutputStream
 
@@ -89,7 +91,7 @@ fun CameraPreviewWithOverlay(
             )
 
             Text(
-                text = "Point the camera at the mold",
+                text = stringResource(R.string.point_camera_text),
                 color = Color.White,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
@@ -116,7 +118,7 @@ fun CameraPreviewWithOverlay(
                                 if (croppedFile != null) {
                                     onImageCaptured(croppedFile.absolutePath)
                                 } else {
-                                    onError(Exception("Failed to crop image"))
+                                    onError(Exception(context.getString(R.string.failed_to_crop_image)))
                                 }
                             }
 
@@ -132,7 +134,7 @@ fun CameraPreviewWithOverlay(
                     .shadow(8.dp, RoundedCornerShape(50.dp))
             ) {
                 Text(
-                    text = "Capture",
+                    text = stringResource(R.string.capture_text),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center

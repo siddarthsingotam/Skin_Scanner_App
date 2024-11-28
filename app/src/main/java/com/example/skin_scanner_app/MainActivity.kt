@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -154,7 +155,7 @@ class MainActivity : ComponentActivity() {
                     Log.d("MainActivity", "Result: $result")
                     resultText = result // Update result text state
                 } else {
-                    showToast("Failed to get result")
+                    showToast(getString(R.string.failed_to_get_result))
                     Log.d("MainActivity", "Failed to get result: ${response.errorBody()?.string()}")
                 }
             }
@@ -294,7 +295,7 @@ class MainActivity : ComponentActivity() {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Skin Scanner",
+                        text = stringResource(R.string.primary_text_title),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary
@@ -302,7 +303,7 @@ class MainActivity : ComponentActivity() {
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Scan your skin to detect possible melanoma using advanced AI.",
+                    text = stringResource(R.string.secondary_text_below_title),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -399,7 +400,7 @@ class MainActivity : ComponentActivity() {
                             text = "Clear",
                             color = MaterialTheme.colorScheme.onError,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
+                            fontSize = 16.sp,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -419,7 +420,7 @@ class MainActivity : ComponentActivity() {
                             text = "Analyze",
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
+                            fontSize = 16.sp,
                             textAlign = TextAlign.Center
                         )
                     }

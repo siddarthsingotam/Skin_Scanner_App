@@ -41,4 +41,10 @@
     <string name="source_title">Source:</string>
     <string name="source_link_text">CDC: Skin Cancer Prevention</string>
     <string name="tap_analyze_text">Tap analyze to send your photo to our server</string>
+    <string name="point_camera_text">Point the camera at the mold</string>
+    <string name="failed_to_crop_image">Failed to crop image</string>
+    <string name="capture_text">Capture</string>
+    <string name="failed_to_get_result">Failed to get result</string>
+    <string name="secondary_text_below_title">Scan your skin to detect possible melanoma using advanced AI.</string>
+    <string name="primary_text_title">Skin Scanner</string>
 </resources>
