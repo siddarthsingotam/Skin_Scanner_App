@@ -360,6 +360,11 @@ fun Content(photoPath: String?, resultText: String?) {
                             Log.d("ClearButton", "Clear button clicked")
                             activity.photoPath = null
                             activity.resultText = null
+                            activity.setContent {
+                                Skin_Scanner_AppTheme {
+                                    MainApp(photoPath = null, resultText = null)
+                                }
+                            }
                         },
                         shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
