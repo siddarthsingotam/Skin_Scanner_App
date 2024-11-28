@@ -428,7 +428,7 @@ class MainActivity : ComponentActivity() {
                 // Display result text
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Result: $resultText",
+                    text = if (resultText == getString(R.string.tap_analyze_text)) resultText else "Result: $resultText",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.padding(10.dp)
