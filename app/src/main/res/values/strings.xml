@@ -40,4 +40,5 @@
     </string>
     <string name="source_title">Source:</string>
     <string name="source_link_text">CDC: Skin Cancer Prevention</string>
+    <string name="tap_analyze_text">Tap analyze to send your photo to our server</string>
 </resources>
