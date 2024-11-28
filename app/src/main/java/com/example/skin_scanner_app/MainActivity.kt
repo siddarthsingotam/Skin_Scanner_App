@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -259,140 +260,157 @@ fun Content(photoPath: String?, resultText: String?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(10.dp)
             .background(MaterialTheme.colorScheme.surface),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween // Ensures proper spacing between children
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            contentAlignment = Alignment.Center
+        // Header
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = "Skin Scanner",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = "Scan your skin to detect possible melanoma using advanced AI.",
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(16.dp)
-        )
-        Spacer(modifier = Modifier.height(60.dp))
-
-        Button(
-            onClick = {
-                Log.d("Camera", "Button was clicked")
-                activity.setContent {
-                    
-                    CameraPreviewWithOverlay(
-                        onImageCaptured = { imagePath ->
-                            Log.d("Camera", "Image captured at $imagePath")
-                            // Return to MainApp and display the captured photo
-                            activity.setContent {
-                                Skin_Scanner_AppTheme {
-                                    MainApp(photoPath = imagePath, resultText = null)
-                                }
-                            }
-                        },
-                        onError = { exception ->
-                            Log.e("Camera", "Error: ${exception.localizedMessage}")
-                            Toast.makeText(activity, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
-            },
-            shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            modifier = Modifier
-                .size(120.dp)
-                .shadow(4.dp, CircleShape)
-        ) {
-            Text(
-                text = "Start Scan",
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-        Spacer(modifier = Modifier.height(30.dp))
-
-        // Display the captured image
-        photoPath?.let { path ->
-            AsyncImage(
-                model = path,
-                contentDescription = "Captured Image",
+            Box(
                 modifier = Modifier
-                    .size(200.dp)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(8.dp)
-                    .shadow(4.dp),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                    .fillMaxWidth()
+                    .height(56.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Button(
-                    onClick = {
-                        Log.d("ClearButton", "Clear button clicked")
-                        activity.photoPath = null
-                        activity.resultText = null
-                    },
-                    shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                    modifier = Modifier.size(100.dp)
-                ) {
-                    Text(
-                        text = "Clear",
-                        color = MaterialTheme.colorScheme.onError,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                Text(
+                    text = "Skin Scanner",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Scan your skin to detect possible melanoma using advanced AI.",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
 
-                Button(
-                    onClick = {
-                        Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
-                        Log.d("Camera", "Analyze button clicked")
-                        activity.resultText = null // Clear previous result on new analyze
-                        path.let { activity.analyzeImage(it) }
-                    },
-                    shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.size(100.dp)
+        // Buttons and Image
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = {
+                    Log.d("Camera", "Button was clicked")
+                    activity.setContent {
+                        CameraPreviewWithOverlay(
+                            onImageCaptured = { imagePath ->
+                                Log.d("Camera", "Image captured at $imagePath")
+                                // Return to MainApp and display the captured photo
+                                activity.setContent {
+                                    Skin_Scanner_AppTheme {
+                                        MainApp(photoPath = imagePath, resultText = null)
+                                    }
+                                }
+                            },
+                            onError = { exception ->
+                                Log.e("Camera", "Error: ${exception.localizedMessage}")
+                                Toast.makeText(activity, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
+                },
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier
+                    .size(width = 150.dp, height = 60.dp)
+                    .shadow(4.dp, RoundedCornerShape(20.dp))
+            ) {
+                Text(
+                    text = "Start Scan",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // Display the captured image
+            photoPath?.let { path ->
+                AsyncImage(
+                    model = path,
+                    contentDescription = "Captured Image",
+                    modifier = Modifier
+                        .size(200.dp)
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(8.dp)
+                        .shadow(4.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(
-                        text = "Analyze",
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Button(
+                        onClick = {
+                            Log.d("ClearButton", "Clear button clicked")
+                            activity.photoPath = null
+                            activity.resultText = null
+                        },
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                        modifier = Modifier.size(width = 150.dp, height = 60.dp)
+                    ) {
+                        Text(
+                            text = "Clear",
+                            color = MaterialTheme.colorScheme.onError,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            Toast.makeText(context, "Analyzing...", Toast.LENGTH_SHORT).show()
+                            Log.d("Camera", "Analyze button clicked")
+                            activity.resultText = null // Clear previous result on new analyze
+                            path.let { activity.analyzeImage(it) }
+                        },
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        modifier = Modifier.size(width = 150.dp, height = 60.dp)
+                    ) {
+                        Text(
+                            text = "Analyze",
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         }
 
-        // Display result text only if it's not null
-        resultText?.let {
+        // Display result text
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "Result: $it",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
+            resultText?.let {
+                Text(
+                    text = "Result: $it",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(10.dp)
+                )
+            }
         }
     }
 }
