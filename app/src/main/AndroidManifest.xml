@@ -2,14 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Queries for camera intent -->
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
     </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,6 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Skin_Scanner_App"
         tools:targetApi="31">
+
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -27,10 +33,11 @@
             android:theme="@style/Theme.Skin_Scanner_App">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- FileProvider for camera -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.skin_scanner_app.fileprovider"
@@ -40,6 +47,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- CameraX Configuration -->
+        <meta-data
+            android:name="androidx.camera.lifecycle.CameraXConfig"
+            android:value="androidx.camera.camera2.Camera2Config" />
     </application>
 
 </manifest>
