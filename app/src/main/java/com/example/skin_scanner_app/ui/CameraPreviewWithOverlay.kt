@@ -123,15 +123,23 @@ fun cropImageToRectangle(imageFile: File): File? {
     try {
         val originalBitmap = BitmapFactory.decodeFile(imageFile.absolutePath) ?: return null
 
+        val matrix = android.graphics.Matrix().apply {
+            postRotate(90f) // Rotate 90 degrees clockwise
+        }
+
+        val rotatedBitmap = Bitmap.createBitmap(
+            originalBitmap, 0, 0, originalBitmap.width, originalBitmap.height, matrix, true
+        )
+
         // Define cropping rectangle (adjust coordinates and dimensions as needed)
-        val rectX = (originalBitmap.width - 950) / 2 // Centered X
-        val rectY = (originalBitmap.height - 950) / 2 // Centered Y
+        val rectX = (rotatedBitmap.width - 950) / 2 // Centered X
+        val rectY = (rotatedBitmap.height - 950) / 2 // Centered Y
         val rectWidth = 950
         val rectHeight = 950
 
         // Crop the bitmap
         val croppedBitmap = Bitmap.createBitmap(
-            originalBitmap,
+            rotatedBitmap,
             rectX, rectY, rectWidth, rectHeight
         )
 
