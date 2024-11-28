@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import com.example.skin_scanner_app.ui.theme.Skin_Scanner_AppTheme
 import kotlinx.coroutines.launch
 import coil3.compose.AsyncImage
+import com.example.skin_scanner_app.ui.CameraPreviewWithOverlay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -287,12 +288,22 @@ fun Content(photoPath: String?, resultText: String?) {
         Button(
             onClick = {
                 Log.d("Camera", "Button was clicked")
-                if (activity.permissionManager.isPermissionGranted(Manifest.permission.CAMERA)) {
-                    activity.openCamera()
-                } else {
-                    activity.permissionManager.requestPermission(
-                        activity.cameraPermissionLauncher,
-                        Manifest.permission.CAMERA
+                activity.setContent {
+                    
+                    CameraPreviewWithOverlay(
+                        onImageCaptured = { imagePath ->
+                            Log.d("Camera", "Image captured at $imagePath")
+                            // Return to MainApp and display the captured photo
+                            activity.setContent {
+                                Skin_Scanner_AppTheme {
+                                    MainApp(photoPath = imagePath, resultText = null)
+                                }
+                            }
+                        },
+                        onError = { exception ->
+                            Log.e("Camera", "Error: ${exception.localizedMessage}")
+                            Toast.makeText(activity, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        }
                     )
                 }
             },
