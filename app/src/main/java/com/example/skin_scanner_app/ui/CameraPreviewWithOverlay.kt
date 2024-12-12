@@ -12,12 +12,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.skin_scanner_app.R
 import java.io.File
 import java.io.FileOutputStream
 
@@ -77,64 +79,67 @@ fun CameraPreviewWithOverlay(
             }, executor)
         }
 
-        // Overlay: Green-bordered rectangle
-        Box(
-            modifier = Modifier
-                .size(200.dp) // Size of the rectangle
-                .align(Alignment.Center) // Center the rectangle
-                .border(4.dp, Color.Green, RoundedCornerShape(8.dp)) // Green border
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            // Overlay: Green-bordered rectangle
+            Box(
+                modifier = Modifier
+                    .size(200.dp) // Size of the rectangle
+                    .border(4.dp, Color.Green, RoundedCornerShape(8.dp)) // Green border
+            )
 
-        Text(
-            text = "Point the camera at the mold",
-            color = Color.White,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(top = 230.dp) // Adjust the padding to position the text below the rectangle
-        )
+            Text(
+                text = stringResource(R.string.point_camera_text),
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 16.dp) // Adjust the padding to position the text below the rectangle
+            )
 
-        // Capture Button
-        Button(
-            onClick = {
-                val outputDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                val photoFile = File(
-                    outputDirectory,
-                    "IMG_${System.currentTimeMillis()}.jpg"
-                )
-                val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+            // Capture Button
+            Button(
+                onClick = {
+                    val outputDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                    val photoFile = File(
+                        outputDirectory,
+                        "IMG_${System.currentTimeMillis()}.jpg"
+                    )
+                    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-                imageCapture.takePicture(
-                    outputOptions,
-                    executor,
-                    object : ImageCapture.OnImageSavedCallback {
-                        override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                            // Crop the image after it's saved
-                            val croppedFile = cropImageToRectangle(photoFile)
-                            if (croppedFile != null) {
-                                onImageCaptured(croppedFile.absolutePath)
-                            } else {
-                                onError(Exception("Failed to crop image"))
+                    imageCapture.takePicture(
+                        outputOptions,
+                        executor,
+                        object : ImageCapture.OnImageSavedCallback {
+                            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                                // Crop the image after it's saved
+                                val croppedFile = cropImageToRectangle(photoFile)
+                                if (croppedFile != null) {
+                                    onImageCaptured(croppedFile.absolutePath)
+                                } else {
+                                    onError(Exception(context.getString(R.string.failed_to_crop_image)))
+                                }
+                            }
+
+                            override fun onError(exception: ImageCaptureException) {
+                                onError(exception)
                             }
                         }
-
-                        override fun onError(exception: ImageCaptureException) {
-                            onError(exception)
-                        }
-                    }
+                    )
+                },
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .size(120.dp)
+                    .shadow(8.dp, RoundedCornerShape(50.dp))
+            ) {
+                Text(
+                    text = stringResource(R.string.capture_text),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
                 )
-            },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)       // Keep it in the bottom-center
-                .padding(bottom = 60.dp)             // Adjust padding to lift it slightly
-        ) {
-            Text(
-                text = "Capture",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
+            }
         }
     }
 }
