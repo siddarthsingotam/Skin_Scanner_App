@@ -92,7 +92,29 @@ class MainActivity : ComponentActivity() {
         // Camera Permission Launcher
         cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                openCamera()
+                // Render the camera overlay directly after permission is granted
+                setContent {
+                    CameraPreviewWithOverlay(
+                        onImageCaptured = { imagePath ->
+                            Log.d("Camera", "Image captured at $imagePath")
+                            photoPath = imagePath
+                            setContent {
+                                Skin_Scanner_AppTheme {
+                                    MainApp(
+                                        photoPath = imagePath,
+                                        resultText = null,
+                                        permissionManager = permissionManager,
+                                        locationPermissionLauncher = locationPermissionLauncher
+                                    )
+                                }
+                            }
+                        },
+                        onError = { exception ->
+                            Log.e("Camera", "Error: ${exception.localizedMessage}")
+                            Toast.makeText(this, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                    }
             } else {
                 Toast.makeText(this, getString(R.string.camera_permission_needed), Toast.LENGTH_SHORT).show()
                 Log.d("Camera", "Camera permission denied")
@@ -122,13 +144,6 @@ class MainActivity : ComponentActivity() {
             Skin_Scanner_AppTheme {
                 MainApp(photoPath, resultText, permissionManager, locationPermissionLauncher)
             }
-        }
-    }
-
-    fun openCamera() {
-        val cameraIntent = cameraManager.getCameraIntent()
-        if (cameraIntent?.resolveActivity(packageManager) != null) {
-            cameraActivityResultLauncher.launch(cameraIntent)
         }
     }
 
@@ -316,7 +331,6 @@ fun Content(photoPath: String?, resultText: String?) {
         ) {
             Button(
                 onClick = {
-                    Log.d("Camera", "Button was clicked")
                     activity.permissionManager.checkAndRequestCameraPermission(
                         launcher = activity.cameraPermissionLauncher,
                         onPermissionGranted = {
