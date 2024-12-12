@@ -108,29 +108,7 @@ class MainActivity : ComponentActivity() {
             }
         cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                // Render the camera overlay directly after permission is granted
-                setContent {
-                    CameraPreviewWithOverlay(
-                        onImageCaptured = { imagePath ->
-                            Log.d("Camera", "Image captured at $imagePath")
-                            photoPath = imagePath
-                            setContent {
-                                Skin_Scanner_AppTheme {
-                                    MainApp(
-                                        photoPath = imagePath,
-                                        resultText = null,
-                                        permissionManager = permissionManager,
-                                        locationPermissionLauncher = locationPermissionLauncher
-                                    )
-                                }
-                            }
-                        },
-                        onError = { exception ->
-                            Log.e("Camera", "Error: ${exception.localizedMessage}")
-                            Toast.makeText(this, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                    }
+                openCamera()
             } else {
                 Toast.makeText(this, getString(R.string.camera_permission_needed), Toast.LENGTH_SHORT).show()
                 Log.d("Camera", "Camera permission denied")
@@ -436,6 +414,7 @@ fun MainApp(photoPath: String?, resultText: String?, permissionManager: Permissi
             // Start Scan Button
             Button(
                 onClick = {
+                    Log.d("Camera", "Button was clicked")
                     activity.permissionManager.checkAndRequestCameraPermission(
                         launcher = activity.cameraPermissionLauncher,
                         onPermissionGranted = {
