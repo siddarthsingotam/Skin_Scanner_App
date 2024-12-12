@@ -44,7 +44,7 @@
 
 <!--    Hospitals   -->
     <string name="hospitals_title">Find Health Centers nearby</string>
-    <string name="hospitals_subtitle">Click the button to search for the nearest health centers</string>
+    <string name="hospitals_description_text">If you are concerned about the spot on your skin or received scan results you can click the button to search for the nearest health centers</string>
     <string name="find_nearby_health_centers">Find nearby \n</string>
 
 </resources>

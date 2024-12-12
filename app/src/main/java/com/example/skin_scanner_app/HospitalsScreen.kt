@@ -13,7 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 
 @Composable
@@ -30,10 +32,16 @@ fun Hospitals(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Find Nearby Hospitals",
+            text = stringResource(R.string.hospitals_title),
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 16.dp)
+        )
+        Text(
+            text = stringResource(R.string.hospitals_description_text),
+            style = MaterialTheme.typography.bodyMedium,
+            lineHeight = 20.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         Button(

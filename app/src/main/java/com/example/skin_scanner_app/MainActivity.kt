@@ -317,27 +317,32 @@ fun Content(photoPath: String?, resultText: String?) {
             Button(
                 onClick = {
                     Log.d("Camera", "Button was clicked")
-                    activity.setContent {
-                        CameraPreviewWithOverlay(
-                            onImageCaptured = { imagePath ->
-                                Log.d("Camera", "Image captured at $imagePath")
-                                // Return to MainApp and display the captured photo
-                                activity.setContent {
-                                    Skin_Scanner_AppTheme {
-                                        MainApp(
-                                            photoPath = imagePath,
-                                            resultText = null,
-                                            permissionManager = activity.permissionManager,
-                                            locationPermissionLauncher = activity.locationPermissionLauncher)
+                    activity.permissionManager.checkAndRequestCameraPermission(
+                        launcher = activity.cameraPermissionLauncher,
+                        onPermissionGranted = {
+                            activity.setContent {
+                                CameraPreviewWithOverlay(
+                                    onImageCaptured = { imagePath ->
+                                        Log.d("Camera", "Image captured at $imagePath")
+                                        activity.setContent {
+                                            Skin_Scanner_AppTheme {
+                                                MainApp(
+                                                    photoPath = imagePath,
+                                                    resultText = null,
+                                                    permissionManager = activity.permissionManager,
+                                                    locationPermissionLauncher = activity.locationPermissionLauncher
+                                                )
+                                            }
+                                        }
+                                    },
+                                    onError = { exception ->
+                                        Log.e("Camera", "Error: ${exception.localizedMessage}")
+                                        Toast.makeText(activity, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
                                     }
-                                }
-                            },
-                            onError = { exception ->
-                                Log.e("Camera", "Error: ${exception.localizedMessage}")
-                                Toast.makeText(activity, "Error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                )
                             }
-                        )
-                    }
+                        }
+                    )
                 },
                 shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(

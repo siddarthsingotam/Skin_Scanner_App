@@ -7,6 +7,17 @@ import androidx.activity.result.ActivityResultLauncher
 
 class PermissionManager(private val context: Context) {
 
+    fun checkAndRequestCameraPermission(
+        launcher: ActivityResultLauncher<String>,
+        onPermissionGranted: () -> Unit
+    ) {
+        if (isPermissionGranted(Manifest.permission.CAMERA)) {
+            onPermissionGranted()
+        } else {
+            launcher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
     fun checkAndRequestLocationPermission(
         launcher: ActivityResultLauncher<String>,
         onPermissionGranted: () -> Unit
