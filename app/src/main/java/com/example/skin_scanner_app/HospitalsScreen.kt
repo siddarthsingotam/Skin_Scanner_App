@@ -1,6 +1,6 @@
 package com.example.skin_scanner_app
 
-import android.Manifest
+import android.widget.Toast
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+
 
 @Composable
 fun Hospitals(
@@ -37,18 +38,26 @@ fun Hospitals(
 
         Button(
             onClick = {
-                permissionManager.requestPermission(
+                // Delegate permission checking to PermissionManager
+                permissionManager.checkAndRequestLocationPermission(
                     launcher = locationPermissionLauncher,
-                    permission = Manifest.permission.ACCESS_FINE_LOCATION
-                )
-
-                if (permissionManager.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    val uri = Uri.parse("geo:0,0?q=health+center") // "geo:0,0?q=health+center&radius=5000"
-                    val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                        setPackage("com.google.android.apps.maps")
+                    onPermissionGranted = {
+                        // Execute the Google Maps search logic here
+                        val uri = Uri.parse("geo:0,0?q=health+center") // "geo:0,0?q=health+center&radius=5000"
+                        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                            setPackage("com.google.android.apps.maps")
+                        }
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                context,
+                                "Unable to open Google Maps",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-                    context.startActivity(intent)
-                }
+                )
             },
             modifier = Modifier.padding(16.dp)
         ) {

@@ -1,6 +1,5 @@
 package com.example.skin_scanner_app
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
