@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -78,6 +77,7 @@ class MainActivity : ComponentActivity() {
 
     lateinit var permissionManager: PermissionManager
     lateinit var cameraPermissionLauncher: ActivityResultLauncher<String>
+    lateinit var locationPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraManager: CameraManager
 
@@ -100,6 +100,13 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // Location Permission Launcher
+        locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (!isGranted) {
+                Toast.makeText(this, "Location permission is required to find nearby health centers", Toast.LENGTH_LONG).show()
+            }
+        }
+
         // Camera Activity Result Launcher
         cameraActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -114,7 +121,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Skin_Scanner_AppTheme {
-                MainApp(photoPath, resultText)
+                MainApp(photoPath, resultText, permissionManager, locationPermissionLauncher)
             }
         }
     }
@@ -157,7 +164,8 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainApp(photoPath: String?, resultText: String?) {
+fun MainApp(photoPath: String?, resultText: String?, permissionManager: PermissionManager,
+            locationPermissionLauncher: ActivityResultLauncher<String>) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     var selectedScreen by remember { mutableStateOf("Home") }
@@ -232,7 +240,7 @@ fun MainApp(photoPath: String?, resultText: String?) {
                 when (selectedScreen) {
                     "Home" -> Content(photoPath, resultText)
                     "Recommendations" -> Recommendations()
-                    "Hospitals" -> Hospitals()
+                    "Hospitals" -> Hospitals(permissionManager, locationPermissionLauncher)
                 }
             }
         }
@@ -317,7 +325,11 @@ fun Content(photoPath: String?, resultText: String?) {
                                 // Return to MainApp and display the captured photo
                                 activity.setContent {
                                     Skin_Scanner_AppTheme {
-                                        MainApp(photoPath = imagePath, resultText = null)
+                                        MainApp(
+                                            photoPath = imagePath,
+                                            resultText = null,
+                                            permissionManager = activity.permissionManager,
+                                            locationPermissionLauncher = activity.locationPermissionLauncher)
                                     }
                                 }
                             },
