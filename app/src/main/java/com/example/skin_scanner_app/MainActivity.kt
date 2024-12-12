@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
@@ -195,6 +196,14 @@ fun MainApp(photoPath: String?, resultText: String?) {
                         coroutineScope.launch { drawerState.close() }
                     }
                 )
+                DrawerItem(
+                    icon = Icons.Filled.LocalHospital,
+                    text = "Hospitals",
+                    onClick = {
+                        selectedScreen = "Hospitals"
+                        coroutineScope.launch { drawerState.close() }
+                    }
+                )
             }
         }
     ) {
@@ -223,6 +232,7 @@ fun MainApp(photoPath: String?, resultText: String?) {
                 when (selectedScreen) {
                     "Home" -> Content(photoPath, resultText)
                     "Recommendations" -> Recommendations()
+                    "Hospitals" -> Hospitals()
                 }
             }
         }

@@ -40,4 +40,10 @@
     </string>
     <string name="source_title">Source:</string>
     <string name="source_link_text">CDC: Skin Cancer Prevention</string>
+
+
+<!--    Hospitals   -->
+    <string name="hospitals_title">Find Health Centers nearby</string>
+    <string name="hospitals_subtitle">Click the button to search for the nearest health centers</string>
+
 </resources>
