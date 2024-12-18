@@ -52,7 +52,7 @@ The **Skin Scanner App** is a mobile application designed to help users scan the
 ![All Views](documents/views.png "All Views")
 
 
-![Scan view](documents/scan_views.png "Scan View")
+![Scan view](documents/scan_view.png "Scan View")
 
 
 ![Hospitals view](documents/hospitals_view.png "Hospitals view")
