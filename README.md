@@ -7,16 +7,17 @@ The **Skin Scanner App** is a mobile application designed to help users scan the
 ## Table of Contents
 
 1. [Features](#features)
-2. [Installation](#installation)
-3. [Permissions](#permissions)
-4. [Technical Details](#technical-details)
+2. [Screenshots](#screenshots)
+3. [Installation](#installation)
+4. [Permissions](#permissions)
+5. [Technical Details](#technical-details)
     - [Tools and Technologies](#tools-and-technologies)
     - [Key Components](#key-components)
-5. [How It Works Together](#how-it-works-together)
-6. [How to Use](#how-to-use)
-7. [Contribution Guidelines](#contribution-guidelines)
-8. [Acknowledgments](#acknowledgments)
-9. [Authors](#authors)
+6. [How It Works Together](#how-it-works-together)
+7. [How to Use](#how-to-use)
+8. [Contribution Guidelines](#contribution-guidelines)
+9. [Acknowledgments](#acknowledgments)
+10. [Authors](#authors)
 
 ---
 
@@ -43,6 +44,18 @@ The **Skin Scanner App** is a mobile application designed to help users scan the
 
 6. **Backend Integration**:
     - Processes captured images by sending them to the backend server for AI analysis.
+
+---
+
+## Screenshots
+
+![All Views](documents/views.png "All Views")
+
+
+![Scan view](documents/scan_views.png "Scan View")
+
+
+![Hospitals view](documents/hospitals_view.png "Hospitals view")
 
 ---
 
